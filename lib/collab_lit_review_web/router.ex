@@ -7,10 +7,13 @@ defmodule CollabLitReviewWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug CollabLitReviewWeb.Plugs.FetchSession
   end
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
+    plug CollabLitReviewWeb.Plugs.FetchSession
   end
 
   scope "/", CollabLitReviewWeb do
@@ -19,8 +22,9 @@ defmodule CollabLitReviewWeb.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", CollabLitReviewWeb do
-  #   pipe_through :api
-  # end
+  scope "/api/v1", CollabLitReviewWeb do
+    pipe_through :api
+
+    resources "/users", UserController, except: [:new, :edit]
+  end
 end
