@@ -14,39 +14,39 @@ import api from './api';
 
 
 function Routes(props) {
-    let {error} = props;
-    return <Router>                     
-             <div>
-               <Header />
-               <div className="row">
-                 <div className="col-12">
-                   <Switch>
-                     {error
-                      && <Route path="/"
-                                component={ShowError}/>}
-                     <Route path="/"
-                            exact={true}
-                            component={ReviewList}/>
-                     {/* <Route path="/register" */}
-                     {/*        exact={true} */}
-                     {/*        component={Register}/> */}
-                     {/* <Route path="/new" */}
-                     {/*        exact={true} */}
-                     {/*        component={NewTask}/> */}
-                     {/* <Route path="/progress/:id" */}
-                     {/*        exact={true} */}
-                     {/*        render={({match}) => */}
-                     {/*                <Complete taskId={match.params.id} mode={"progress"}></Complete> */}
-                     {/*               }/> */}
-                   </Switch>
-                 </div>
+  let {error} = props;
+  return <Router>
+           <div>
+             <Header />
+             <div className="row">
+               <div className="col-12">
+                 <Switch>
+                   {error
+                    && <Route path="/"
+                        component={ShowError}/>}
+                   <Route path="/"
+                          exact={true}
+                          component={ReviewList}/>
+                   {/* <Route path="/register" */}
+                   {/*        exact={true} */}
+                   {/*        component={Register}/> */}
+                   {/* <Route path="/new" */}
+                   {/*        exact={true} */}
+                   {/*        component={NewTask}/> */}
+                   {/* <Route path="/progress/:id" */}
+                   {/*        exact={true} */}
+                   {/*        render={({match}) => */}
+                   {/*                <Complete taskId={match.params.id} mode={"progress"}></Complete> */}
+                   {/*               }/> */}
+                 </Switch>
                </div>
              </div>
-           </Router>;
+           </div>
+         </Router>;
 }
 
 function state2props(state) {
-    return {session: state.session, error: state.error};
+  return {session: state.session, error: state.error};
 }
 
 export default connect(state2props)(Routes);

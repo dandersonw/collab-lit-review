@@ -9,8 +9,9 @@ import Routes from './routes';
 
 export default function root_init(root, store) {
   ReactDOM.render(<Provider store={store}>
-                       <Root session={window.session}/>
-                     </Provider>, root);
+                      <Root session={window.session}/>
+                    </Provider>,
+                  root);
 }
 
 class Root extends React.Component {

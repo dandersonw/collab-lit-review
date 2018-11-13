@@ -29,7 +29,7 @@ function Review(props) {
   let { review } = props;
   //console.log(review);
   return <tr key={review.id}>
-                     </tr>;
+         </tr>;
 }
 
 function state2props(state) {

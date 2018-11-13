@@ -8,5 +8,5 @@
 
 <script>
   window.session = <%= raw Jason.encode!(@session) %>;
-  // window.reviews = <%= raw Jason.encode!(@reviews) %>;
+  //window.reviews = <%# <%= raw Jason.encode!(@reviews) %> %>;
 </script>
