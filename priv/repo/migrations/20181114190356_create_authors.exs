@@ -1,0 +1,14 @@
+defmodule CollabLitReview.Repo.Migrations.CreateAuthors do
+  use Ecto.Migration
+
+  def change do
+    create table(:authors) do
+      add :s2_id, :integer
+      add :name, :string
+
+      timestamps()
+    end
+
+    create index(:authors, [:s2_id], unique: true)
+  end
+end
