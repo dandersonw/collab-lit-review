@@ -3,15 +3,21 @@ defmodule CollabLitReview.Repo.Migrations.CreatePapers do
 
   def change do
     create table(:papers) do
-      add :s2_id, :integer
+      add :s2_id, :string
       add :title, :string
-      add :abstract, :text
-      add :author_id, references(:authors, on_delete: :nothing)
+      add :abstract, :text, nullable: true
+      add :year, :integer
+      add :is_stub, :boolean
 
       timestamps()
     end
 
-    create index(:papers, [:author_id])
     create index(:papers, [:s2_id], unique: true)
+
+    create table(:authors_papers) do
+      add :paper_id, references(:papers, column: :s2_id, type: :string)
+      add :author_id, references(:authors, column: :s2_id)
+      timestamps()
+    end
   end
 end
