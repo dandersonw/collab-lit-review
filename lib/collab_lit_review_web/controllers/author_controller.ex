@@ -25,19 +25,4 @@ defmodule CollabLitReviewWeb.AuthorController do
     render(conn, "show.json", author: author)
   end
 
-  def update(conn, %{"id" => id, "author" => author_params}) do
-    author = S2.get_author!(id)
-
-    with {:ok, %Author{} = author} <- S2.update_author(author, author_params) do
-      render(conn, "show.json", author: author)
-    end
-  end
-
-  def delete(conn, %{"id" => id}) do
-    author = S2.get_author!(id)
-
-    with {:ok, %Author{}} <- S2.delete_author(author) do
-      send_resp(conn, :no_content, "")
-    end
-  end
 end

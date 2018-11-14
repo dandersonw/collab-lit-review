@@ -7,6 +7,8 @@ defmodule CollabLitReview.S2 do
   alias CollabLitReview.Repo
 
   alias CollabLitReview.S2.Author
+  alias CollabLitReview.S2.Paper
+  alias CollabLitReview.S2.AuthorPaper
 
   @doc """
   Returns the list of authors.
@@ -37,6 +39,67 @@ defmodule CollabLitReview.S2 do
   """
   def get_author!(id), do: Repo.get!(Author, id)
 
+  def get_author_by_s2_id(s2_id), do: Repo.get_by(Author, s2_id: s2_id)
+
+  def get_or_fetch_author(%{"s2_id" => s2_id}) do
+    case get_author_by_s2_id(s2_id) do
+      nil -> fetch_author_by_s2_id(s2_id)
+      author -> author
+    end
+  end
+
+  def fetch_author_by_s2_id(s2_id) do
+    case HTTPoison.get("https://api.semanticscholar.org/v1/author/" <> Integer.to_string(s2_id)) do
+      {:ok, %{body: body}} ->
+        case Jason.decode(body) do
+          {:ok, %{"authorId" => s2_id, "name" => name, "papers" => papers}} ->
+            insert_author_w_paper_stubs(s2_id, name, papers)
+          {:error, reason} ->
+            IO.inspect reason
+            {:error, "Error parsing JSON returned from S2"}
+        end
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        IO.inspect reason
+        {:error, "Error connecting to S2"}
+    end
+  end
+
+  def insert_author_w_paper_stubs(s2_id, name, papers) do
+    author_attrs = %{"s2_id" => s2_id, "name" => name}
+    response = create_author(author_attrs)
+    case response do
+      {:ok, author} ->
+        for paper <- papers do
+          insert_paper_stub(author, paper)
+        end
+        author
+      _else -> response
+    end
+  end
+
+  # called with the paper objects returned from the S2 author API
+  def insert_paper_stub(author, stub) do
+    case get_paper_by_s2_id(Map.get(stub, "paperId")) do
+      nil -> # Only insert if the paper is not already in the DB
+        paper = stub
+        |> Map.put("is_stub", true)
+        |> Map.put("s2_id", Map.get(stub, "paperId"))
+        |> create_paper()
+
+        case paper do
+          {:ok, paper} -> associate_author_w_paper(author, paper)
+          _else -> _else
+        end
+      paper -> paper
+    end
+  end
+
+  def associate_author_w_paper(author, paper) do
+    %AuthorPaper{}
+    |> AuthorPaper.changeset(%{"author_id" => author.s2_id, "paper_id" => paper.s2_id})
+    |> Repo.insert()
+  end
+  
   @doc """
   Creates a author.
 
@@ -102,8 +165,6 @@ defmodule CollabLitReview.S2 do
     Author.changeset(author, %{})
   end
 
-  alias CollabLitReview.S2.Paper
-
   @doc """
   Returns the list of papers.
 
@@ -132,6 +193,8 @@ defmodule CollabLitReview.S2 do
 
   """
   def get_paper!(id), do: Repo.get!(Paper, id)
+
+  def get_paper_by_s2_id(id), do: Repo.get_by(Paper, s2_id: id)
 
   @doc """
   Creates a paper.

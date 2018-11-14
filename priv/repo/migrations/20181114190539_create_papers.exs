@@ -4,7 +4,7 @@ defmodule CollabLitReview.Repo.Migrations.CreatePapers do
   def change do
     create table(:papers) do
       add :s2_id, :string
-      add :title, :string
+      add :title, :text
       add :abstract, :text, nullable: true
       add :year, :integer
       add :is_stub, :boolean

@@ -26,7 +26,7 @@ defmodule CollabLitReviewWeb.Router do
     pipe_through :api
 
     resources "/users", UserController, except: [:new, :edit]
-    resources "/authors", AuthorController, except: [:new, :edit]
+    resources "/authors", AuthorController, only: [:show, :create]
     resources "/papers", PaperController, except: [:new, :edit]
   end
 end
