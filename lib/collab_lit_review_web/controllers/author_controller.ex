@@ -11,8 +11,9 @@ defmodule CollabLitReviewWeb.AuthorController do
     render(conn, "index.json", authors: authors)
   end
 
-  def create(conn, %{"author" => author_params}) do
-    with {:ok, %Author{} = author} <- S2.create_author(author_params) do
+  # Can cause something to be fetched.
+  def create(conn, %{"author" => s2_id}) do
+    with {:ok, %Author{} = author} <- S2.get_or_fetch_author(s2_id) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", Routes.author_path(conn, :show, author))
@@ -20,6 +21,7 @@ defmodule CollabLitReviewWeb.AuthorController do
     end
   end
 
+  # Will not cause anything to be fetched
   def show(conn, %{"id" => id}) do
     author = S2.get_author!(id)
     render(conn, "show.json", author: author)
