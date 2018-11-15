@@ -17,5 +17,6 @@ defmodule CollabLitReview.S2.AuthorPaper do
     struct
     |> cast(params, [:author_id, :paper_id])
     |> validate_required([:author_id, :paper_id])
+    |> unique_constraint(:paper_id, name: :authors_papers_index)
   end
 end
