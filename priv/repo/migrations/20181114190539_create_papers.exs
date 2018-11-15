@@ -23,5 +23,13 @@ defmodule CollabLitReview.Repo.Migrations.CreatePapers do
     end
 
     create index(:authors_papers, [:paper_id, :author_id], unique: true, name: :authors_papers_index)
+
+    create table(:citations) do
+      add :citee, references(:papers, column: :s2_id, type: :string)
+      add :citer, references(:papers, column: :s2_id, type: :string)
+      timestamps()
+    end
+
+    create index(:citations, [:citee, :citer], unique: true, name: :citations_index)
   end
 end

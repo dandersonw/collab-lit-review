@@ -9,6 +9,7 @@ defmodule CollabLitReview.S2 do
   alias CollabLitReview.S2.Author
   alias CollabLitReview.S2.Paper
   alias CollabLitReview.S2.AuthorPaper
+  alias CollabLitReview.S2.Citation
 
   @doc """
   Returns the list of authors.
@@ -85,8 +86,7 @@ defmodule CollabLitReview.S2 do
     url = "https://api.semanticscholar.org/v1/paper/" <> s2_id
     get_and_decode_from_s2(url,
       fn paper_data ->
-        authors = Map.get(paper_data, "authors")
-        insert_paper_w_author_stubs(paper_data, authors, Keyword.get(opts, :existing))
+        insert_paper_w_author_stubs(paper_data, Keyword.get(opts, :existing))
     end)
   end
 
@@ -97,8 +97,8 @@ defmodule CollabLitReview.S2 do
                end
     case response do
       {:ok, author} ->
-        for paper <- papers do
-          paper = insert_stub(Paper, paper)
+        for paper_attrs <- papers do
+          paper = insert_stub(Paper, paper_attrs)
           associate_author_w_paper(author, paper)
         end
         author
@@ -106,22 +106,36 @@ defmodule CollabLitReview.S2 do
     end
   end
 
-  # I know this looks incredibly duplicated,
-  # but when we add citations it'll diverge more
-  defp insert_paper_w_author_stubs(paper_attrs, authors, existing) do
+  defp insert_paper_w_author_stubs(paper_attrs, existing) do
     response = case existing do
                  nil -> create_paper(paper_attrs)
                  existing -> update_paper(existing, Map.put(paper_attrs, "is_stub", false))
                end
     case response do
       {:ok, paper} ->
-        for author <- authors do
-          author = insert_stub(Author, author)
-          associate_author_w_paper(author, paper)
+        insert_author_stubs(paper, Map.get(paper_attrs, "authors"))
+        for citer_attrs <- Map.get(paper_attrs, "citations") do
+          citer = insert_stub(Paper, citer_attrs)
+          insert_author_stubs(citer, Map.get(citer_attrs, "authors"))
+          create_citation(citer: citer, citee: paper)
+        end
+        for citee_attrs <- Map.get(paper_attrs, "references") do
+          citee = insert_stub(Paper, citee_attrs)
+          insert_author_stubs(citee, Map.get(citee_attrs, "authors"))
+          create_citation(citer: paper, citee: citee)
         end
         paper
       _else -> response
     end
+  end
+  
+  defp insert_author_stubs(paper, authors) do
+    for author_attrs <- authors do
+      if Map.get(author_attrs, "authorId") do
+        author = insert_stub(Author, author_attrs)
+        associate_author_w_paper(author, paper)
+      end
+    end    
   end
 
   defp insert_stub(type, attrs) do
@@ -162,6 +176,12 @@ defmodule CollabLitReview.S2 do
   defp associate_author_w_paper(author, paper) do
     %AuthorPaper{}
     |> AuthorPaper.changeset(%{"author_id" => author.s2_id, "paper_id" => paper.s2_id})
+    |> Repo.insert()
+  end
+
+  defp create_citation(citer: citer, citee: citee) do
+    %Citation{}
+    |> Citation.changeset(%{"citer" => citer.s2_id, "citee" => citee.s2_id})
     |> Repo.insert()
   end
   
