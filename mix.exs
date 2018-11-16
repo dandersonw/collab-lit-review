@@ -47,6 +47,9 @@ defmodule CollabLitReview.MixProject do
       {:comeonin, "~> 4.1"},
       {:argon2_elixir, "~> 1.3"},
       {:httpoison, "~> 1.4"},
+      {:ueberauth, "~> 0.4"},
+      {:ueberauth_google, "~> 0.7"},
+      {:poison, "~> 3.1"}
     ]
   end
 

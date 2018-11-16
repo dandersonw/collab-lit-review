@@ -26,6 +26,16 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 config :ecto, :json_library, Jason
 
+# Configure Ueberauth for login through external sites
+config :ueberauth, Ueberauth,
+  providers: [
+    #google: {Ueberauth.Strategy.Google, [default_scope: "emails profile plus.me"]}
+    google: {Ueberauth.Strategy.Google, [default_scope: "profile"]}
+  ]
+config :ueberauth, Ueberauth.Strategy.Google.OAuth,
+  client_id: "--",
+  client_secret: "--"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

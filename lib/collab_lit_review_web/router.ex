@@ -22,6 +22,14 @@ defmodule CollabLitReviewWeb.Router do
     get "/", PageController, :index
   end
 
+  # Should this go in our api? It's not strictly JS
+  scope "/auth", CollabLitReviewWeb do
+    pipe_through :browser
+
+    get "/:provider", SessionController, :request
+    get "/:provider/callback", SessionController, :create
+  end
+
   scope "/api/v1", CollabLitReviewWeb do
     pipe_through :api
 
