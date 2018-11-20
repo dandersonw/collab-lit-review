@@ -34,7 +34,7 @@ config :ueberauth, Ueberauth,
   ]
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
   client_id: "827372302923-j1opapmdo4etvufs3vdf6e90enkfihfc.apps.googleusercontent.com",
-  client_secret: "WTzFcAoWor1BWeohKMWr2y5j"
+  client_secret: "--"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
