@@ -33,8 +33,8 @@ config :ueberauth, Ueberauth,
     google: {Ueberauth.Strategy.Google, [default_scope: "profile"]}
   ]
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
-  client_id: "--",
-  client_secret: "--"
+  client_id: "827372302923-j1opapmdo4etvufs3vdf6e90enkfihfc.apps.googleusercontent.com",
+  client_secret: "WTzFcAoWor1BWeohKMWr2y5j"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

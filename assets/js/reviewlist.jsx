@@ -6,12 +6,12 @@ import ReactTimeAgo from 'react-time-ago';
 import _ from 'lodash';
 
 export function ReviewList(props) {
-  let {session, reviews, dispatch} = props;
+  let {session, reviews} = props;
 
   let relevantReviews = reviews;
 
   return <div>
-           <div className="row">             
+           <div className="row">
              <table className="table table-striped">
                <tbody>
                  <tr key="header">

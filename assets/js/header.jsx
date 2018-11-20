@@ -5,43 +5,72 @@ import { Link } from 'react-router-dom';
 import api from './api';
 
 export function Header(props) {
-    let {dispatch, session} = props;
+    return Navbar(props);
+}
 
-    let session_view = <div className="form-inline col-6">
-                         <div className="form-group">
-                           <input id="login-email" type="email" placeholder="email" />
-                         </div>
-                         <div className="form-group">
-                           <input id="login-pass" type="password" placeholder="password" />
-                         </div>
-                         <button id="login-button"
-                                 className="btn btn-secondary"
-                                 onClick={() =>
-                                          api.create_session(document.getElementById("login-email").value,
-                                                             document.getElementById("login-pass").value)}>
-                           Login
-                         </button>
-                         <div className="col-2">
-                           <p><Link to={"/register"}>Register</Link></p>
-                         </div>
-                       </div>;
+function Navbar(props) {
+  let session_view = SessionView(props);
+  let profile_link = ProfileLink(props);
 
-    if (session != null) {
-        session_view = <div className="col-sm">
-                         User: {session.user_email}
-                         <button id="logout-button"
-                                 className="btn btn-secondary"
-                                 onClick={() => api.delete_session()}>Logout</button>
-                       </div>;
-    }
+  return <nav className="navbar navbar-expand-sm navbar-light bg-white mb-3">
+    <Link className="navbar-brand" to={"/"}>CollaberLit</Link>
+    <ul className="navbar-nav mr-auto">
+      <li className="nav-item">
+        <Link className="nav-link" to={"/users"}>Users</Link>
+      </li>
+      <li className="nav-item">
+        <Link className="nav-link" to={"/reviews"}>Reviews</Link>
+      </li>
+      {profile_link}
+    </ul>
+    <ul className="navbar-nav navbar-right">
+      {session_view}
+    </ul>
+  </nav>;
+}
 
-    return <div className="row">
-             <div className="col"><h2>Collab Review</h2></div>
-             <div className="col-sm">
-               <Link to={"/"} onClick={() => api.fetch_reviews()} >Reviews</Link>
-             </div>
-             {session_view}
+function SessionView(props) {
+  let loggedIn = props.session != null;
+
+  if (loggedIn) {
+    return <div className="col-sm">
+                Logged in as: {props.session.user_email}
+                <button id="logout-button"
+                  className="btn btn-secondary"
+                  onClick={() => api.delete_session()}>Logout</button>
            </div>;
+  }
+  else {
+    let onLoginButtonClicked = () => {
+      let username = $("#login-email").val();
+      let password = $("#login-password").val();
+      api.create_session(username, password);
+    }
+    return <li className="dropdown">
+      <a className="dropdown-toggle nav-link" href="#" data-toggle="dropdown">Login/Register</a>
+      <ul className="dropdown-menu">
+        <li>
+          <div className="form-inline mx-3 my-3">
+            <label>Email</label>
+            <input className="form-control mb-1" id="login-email" type="email" />
+            <label>Password</label>
+            <input className="form-control mb-2" id="login-password" type="password" />
+            <button className="btn btn-primary mr-3" onClick={onLoginButtonClicked}>Login</button>
+            <Link to={"/register"}>Register</Link>
+          </div>
+        </li>
+      </ul>
+    </li>;
+  }
+}
+
+function ProfileLink(props) {
+  if (props.session != null) {
+    console.log("Props session is: ", props.session)
+    return <li className="nav-item">
+      <Link className="nav-link" to={"/users/" + props.session.user_id.toString()}>My Profile</Link>
+    </li>
+  }
 }
 
 function state2props(state) {

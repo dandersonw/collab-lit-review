@@ -10,6 +10,9 @@ import $ from 'jquery';
 import Header from './header';
 import ReviewList from './reviewlist';
 import ShowError from './showerror';
+
+import RegisterPage from './registerpage';
+
 import api from './api';
 
 
@@ -27,9 +30,9 @@ function Routes(props) {
                    <Route path="/"
                           exact={true}
                           component={ReviewList}/>
-                   {/* <Route path="/register" */}
-                   {/*        exact={true} */}
-                   {/*        component={Register}/> */}
+                   <Route path="/register"
+                          exact={true}
+                          component={RegisterPage}/> */}
                    {/* <Route path="/new" */}
                    {/*        exact={true} */}
                    {/*        component={NewTask}/> */}

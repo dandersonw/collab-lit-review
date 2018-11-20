@@ -20,6 +20,8 @@ defmodule CollabLitReviewWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/register", PageController, :index
+    #get "/", PageController, :index
   end
 
   # Should this go in our api? It's not strictly JS

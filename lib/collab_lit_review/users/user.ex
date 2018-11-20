@@ -27,6 +27,7 @@ defmodule CollabLitReview.Users.User do
     |> validate_password(:password)
     |> put_pass_hash()
     |> validate_required([:email, :password_hash])
+    |> unique_constraint(:email)
   end
 
   # Password validation

@@ -137,10 +137,12 @@ class TheServer {
             "/api/v1/users",
             { user },
             (resp) => {
-                store.dispatch({
+                /* This is bad for now. We're sending back the user object when we create a user. Probably shouldn't do that since it
+                 contains the hash. */
+                /*store.dispatch({
                     type: 'NEW_SESSION',
                     data: resp.data,
-                });
+                });*/
             }
         );
     }
