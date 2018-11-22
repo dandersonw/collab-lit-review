@@ -5,6 +5,9 @@ defmodule CollabLitReview.Repo.Migrations.CreateDiscoveries do
     create table(:discoveries) do
       add :type, :string
       add :review_id, references(:reviews, on_delete: :nothing)
+      add :author_id, references(:authors, column: :s2_id)
+      add :paper_id, references(:papers, column: :s2_id, type: :string)
+
 
       timestamps()
     end

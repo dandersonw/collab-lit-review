@@ -7,6 +7,7 @@ defmodule CollabLitReview.Reviews do
   alias CollabLitReview.Repo
 
   alias CollabLitReview.Reviews.Review
+  alias CollabLitReview.S2
 
   @doc """
   Returns the list of reviews.
@@ -37,6 +38,15 @@ defmodule CollabLitReview.Reviews do
   """
   def get_review!(id), do: Repo.get!(Review, id)
 
+  def add_collaborator_to_review(user, review) do
+    existing_collaborators = Repo.all(Ecto.assoc(review, :collaborators))
+    review
+    |> Repo.preload(:collaborators)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:collaborators, [user | existing_collaborators])
+    |> Repo.update!()
+  end
+
   @doc """
   Creates a review.
 
@@ -49,7 +59,7 @@ defmodule CollabLitReview.Reviews do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_review(attrs \\ %{}) do
+  defp db_create_review(attrs \\ %{}) do
     %Review{}
     |> Review.changeset(attrs)
     |> Repo.insert()
@@ -325,6 +335,41 @@ defmodule CollabLitReview.Reviews do
   """
   def get_discovery!(id), do: Repo.get!(Discovery, id)
 
+  def create_discovery(review, opts \\ []) do
+    attrs = %{:review_id => review.id}
+    {attrs, papers} = case Keyword.get(opts, :author) do
+                        nil ->
+                          case Keyword.get(opts, :paper) do
+                            nil -> raise ArgumentError
+                            paper ->
+                              attrs = attrs
+                              |> Map.put(:type, "paper")
+                              |> Map.put(:paper_id, paper.s2_id)
+                              paper = S2.get_or_fetch_paper(paper.s2_id)
+                              |> Repo.preload(:references)
+                              papers = paper.references
+                              {attrs, papers}
+                          end
+                        author ->
+                          attrs = attrs
+                          |> Map.put(:type, "author")
+                          |> Map.put(:author_id, author.s2_id)
+                          author = S2.get_or_fetch_author(author.s2_id)
+                          |> Repo.preload(:papers)
+                          papers = author.papers
+                          {attrs, papers}
+                      end
+    case discovery = db_create_discovery(attrs) do
+      {:error, _} -> discovery
+      {:ok, discovery} ->
+        discovery
+        |> Repo.preload(:papers)
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_assoc(:papers, papers)
+        |> Repo.update()
+    end    
+  end
+
   @doc """
   Creates a discovery.
 
@@ -337,7 +382,7 @@ defmodule CollabLitReview.Reviews do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_discovery(attrs \\ %{}) do
+  defp db_create_discovery(attrs \\ %{}) do
     %Discovery{}
     |> Discovery.changeset(attrs)
     |> Repo.insert()
@@ -355,7 +400,7 @@ defmodule CollabLitReview.Reviews do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_discovery(%Discovery{} = discovery, attrs) do
+  defp update_discovery(%Discovery{} = discovery, attrs) do
     discovery
     |> Discovery.changeset(attrs)
     |> Repo.update()
@@ -386,7 +431,7 @@ defmodule CollabLitReview.Reviews do
       %Ecto.Changeset{source: %Discovery{}}
 
   """
-  def change_discovery(%Discovery{} = discovery) do
+  defp change_discovery(%Discovery{} = discovery) do
     Discovery.changeset(discovery, %{})
   end
 end

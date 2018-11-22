@@ -42,5 +42,6 @@ defmodule CollabLitReviewWeb.Router do
     resources "/reviews", ReviewController, except: [:new, :edit]
     resources "/swimlanes", SwimlaneController, except: [:new, :edit]
     resources "/discoveries", DiscoveryController, except: [:new, :edit]
+    resources "/buckets", BucketController, except: [:new, :edit]
   end
 end
