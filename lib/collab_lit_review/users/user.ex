@@ -3,12 +3,13 @@ defmodule CollabLitReview.Users.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias CollabLitReview.Reviews.Review
 
   schema "users" do
     field :email, :string
     field :password_hash, :string
 
-    # has_many :tasks, CollabLitReview.Tasks.Task
+    has_many :reviews, Review
 
     field :pw_tries, :integer
     field :pw_last_try, :utc_datetime

@@ -5,6 +5,7 @@ defmodule CollabLitReview.S2.Paper do
   alias CollabLitReview.S2.Author
   alias CollabLitReview.S2.AuthorPaper
   alias CollabLitReview.S2.Paper
+  alias CollabLitReview.S2.Citation
 
 
   @primary_key {:s2_id, :string, autogenerate: false}
@@ -19,8 +20,8 @@ defmodule CollabLitReview.S2.Paper do
     field :is_stub, :boolean, default: false
 
     many_to_many :authors, Author, [join_through: AuthorPaper, join_keys: [paper_id: :s2_id, author_id: :s2_id]]
-    many_to_many :references, Paper, [join_through: Citation, join_keys: [citer_id: :s2_id, citee_id: :s2_id]]
-    many_to_many :citations, Paper, [join_through: Citation, join_keys: [citee_id: :s2_id, citer_id: :s2_id]]
+    many_to_many :references, Paper, [join_through: Citation, join_keys: [citer: :s2_id, citee: :s2_id]]
+    many_to_many :citations, Paper, [join_through: Citation, join_keys: [citee: :s2_id, citer: :s2_id]]
 
     timestamps()
   end
