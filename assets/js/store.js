@@ -3,9 +3,28 @@ import deepFreeze from 'deep-freeze';
 
 import _ from 'lodash';
 
+/*
+  State
+  {
+    reviews
+    users
+    session
+    error
+  }
+*/
+
 function reviews(state = [], action) {
     switch (action.type) {
     case 'REVIEW_LIST':
+        return action.data;
+    default:
+        return state;
+    }
+}
+
+function users(state = [], action) {
+    switch (action.type) {
+    case 'USER_LIST':
         return action.data;
     default:
         return state;

@@ -12,6 +12,7 @@ import ReviewList from './reviewlist';
 import ShowError from './showerror';
 
 import RegisterPage from './registerpage';
+import UserProfile from './profilepage';
 
 import api from './api';
 
@@ -33,6 +34,9 @@ function Routes(props) {
                    <Route path="/register"
                           exact={true}
                           component={RegisterPage}/> */}
+                   <Route path="/users/:id"
+                          render={({ match }) => <UserProfile profileId={match.params.id}/>}
+                          />
                    {/* <Route path="/new" */}
                    {/*        exact={true} */}
                    {/*        component={NewTask}/> */}

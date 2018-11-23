@@ -40,17 +40,29 @@ class TheServer {
         });
     }
 
-    // fetch_reviews() {
-    //     this.fetch_path(
-    //         "/api/v1/reviews",
-    //         (resp) => {
-    //             store.dispatch({
-    //                 type: 'REVIEW_LIST',
-    //                 data: resp.data,
-    //             });
-    //         }
-    //     );
-    // }
+    fetch_reviews() {
+      this.fetch_path(
+        "/api/v1/reviews",
+        (resp) => {
+          store.dispatch({
+              type: 'REVIEW_LIST',
+              data: resp.data,
+            });
+          }
+        );
+    }
+
+    fetch_users() {
+      this.fetch_path(
+        "/api/v1/users",
+        (resp) => {
+          store.dispatch({
+              type: 'USER_LIST',
+              data: resp.data,
+            });
+          }
+        );
+    }
 
     // new_task(title, desc, assignee) {
     //     let task = {title, desc, assignee}

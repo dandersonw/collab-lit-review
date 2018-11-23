@@ -21,7 +21,7 @@ defmodule CollabLitReviewWeb.Router do
 
     get "/", PageController, :index
     get "/register", PageController, :index
-    #get "/", PageController, :index
+    get "/users/:id", PageController, :index
   end
 
   # Should this go in our api? It's not strictly JS
