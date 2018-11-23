@@ -10,7 +10,7 @@ defmodule CollabLitReview.Reviews do
   alias CollabLitReview.S2
 
   @doc """
-  Returns the list of reviews.
+  Returns a user's reviews
 
   ## Examples
 
@@ -18,8 +18,10 @@ defmodule CollabLitReview.Reviews do
       [%Review{}, ...]
 
   """
-  def list_reviews do
-    Repo.all(Review)
+  def list_reviews(user) do
+    Repo.all(from r in Review,
+      join: c in assoc(r, :collaborators),
+      where: ^user.id == c.id)
   end
 
   @doc """
@@ -77,7 +79,7 @@ defmodule CollabLitReview.Reviews do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_review(%Review{} = review, attrs) do
+  defp update_review(%Review{} = review, attrs) do
     review
     |> Review.changeset(attrs)
     |> Repo.update()
@@ -108,7 +110,7 @@ defmodule CollabLitReview.Reviews do
       %Ecto.Changeset{source: %Review{}}
 
   """
-  def change_review(%Review{} = review) do
+  defp change_review(%Review{} = review) do
     Review.changeset(review, %{})
   end
 
@@ -123,8 +125,8 @@ defmodule CollabLitReview.Reviews do
       [%Swimlane{}, ...]
 
   """
-  def list_swimlanes do
-    Repo.all(Swimlane)
+  def list_swimlanes(review) do
+    Repo.all(from s in Swimlane, where: s.review_id == ^review.id)
   end
 
   @doc """
@@ -155,7 +157,7 @@ defmodule CollabLitReview.Reviews do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_swimlane(attrs \\ %{}) do
+  defp create_swimlane(attrs \\ %{}) do
     %Swimlane{}
     |> Swimlane.changeset(attrs)
     |> Repo.insert()
@@ -173,7 +175,7 @@ defmodule CollabLitReview.Reviews do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_swimlane(%Swimlane{} = swimlane, attrs) do
+  defp update_swimlane(%Swimlane{} = swimlane, attrs) do
     swimlane
     |> Swimlane.changeset(attrs)
     |> Repo.update()
@@ -204,7 +206,7 @@ defmodule CollabLitReview.Reviews do
       %Ecto.Changeset{source: %Swimlane{}}
 
   """
-  def change_swimlane(%Swimlane{} = swimlane) do
+  defp change_swimlane(%Swimlane{} = swimlane) do
     Swimlane.changeset(swimlane, %{})
   end
 
@@ -219,8 +221,8 @@ defmodule CollabLitReview.Reviews do
       [%Bucket{}, ...]
 
   """
-  def list_buckets do
-    Repo.all(Bucket)
+  def list_buckets(swimlane) do
+    Repo.all(from b in Bucket, where: b.swimlane_id == ^swimlane.id)
   end
 
   @doc """
@@ -251,7 +253,7 @@ defmodule CollabLitReview.Reviews do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_bucket(attrs \\ %{}) do
+  defp create_bucket(attrs \\ %{}) do
     %Bucket{}
     |> Bucket.changeset(attrs)
     |> Repo.insert()
@@ -269,7 +271,7 @@ defmodule CollabLitReview.Reviews do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_bucket(%Bucket{} = bucket, attrs) do
+  defp update_bucket(%Bucket{} = bucket, attrs) do
     bucket
     |> Bucket.changeset(attrs)
     |> Repo.update()
@@ -300,7 +302,7 @@ defmodule CollabLitReview.Reviews do
       %Ecto.Changeset{source: %Bucket{}}
 
   """
-  def change_bucket(%Bucket{} = bucket) do
+  defp change_bucket(%Bucket{} = bucket) do
     Bucket.changeset(bucket, %{})
   end
 
@@ -315,8 +317,8 @@ defmodule CollabLitReview.Reviews do
       [%Discovery{}, ...]
 
   """
-  def list_discoveries do
-    Repo.all(Discovery)
+  def list_discoveries(review) do
+    Repo.all(from d in Discovery, where: d.review_id == ^review.id)
   end
 
   @doc """
@@ -335,6 +337,17 @@ defmodule CollabLitReview.Reviews do
   """
   def get_discovery!(id), do: Repo.get!(Discovery, id)
 
+  @doc """
+  Creates a discovery, from either an author or a paper.
+
+  ## Examples
+
+  iex> create_discovery(review, author: author)
+  %Discovery{type: "author", ...}
+
+  iex> create_discovery(review, paper: paper)
+  %Discovery{type: "paper", ...}
+  """
   def create_discovery(review, opts \\ []) do
     attrs = %{:review_id => review.id}
     {attrs, papers} = case Keyword.get(opts, :author) do
@@ -368,6 +381,15 @@ defmodule CollabLitReview.Reviews do
         |> Ecto.Changeset.put_assoc(:papers, papers)
         |> Repo.update()
     end    
+  end
+
+  def remove_paper_from_discovery(discovery, paper) do
+    existing_papers = Rep.all(Ecto.assoc(discovery, :papers))
+    discovery
+    |> Repo.preload(:papers)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:papers, List.delete(existing_papers, paper))
+    |> Repo.update!()
   end
 
   @doc """
