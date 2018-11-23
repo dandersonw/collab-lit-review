@@ -38,5 +38,6 @@ defmodule CollabLitReviewWeb.Router do
     resources "/users", UserController, except: [:new, :edit]
     resources "/authors", AuthorController, only: [:show, :create]
     resources "/papers", PaperController, except: [:new, :edit]
+    resources "/sessions", SessionController, only: [:create]
   end
 end
