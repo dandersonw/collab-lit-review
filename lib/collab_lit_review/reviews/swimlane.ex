@@ -4,11 +4,13 @@ defmodule CollabLitReview.Reviews.Swimlane do
 
   alias CollabLitReview.Reviews.Review
   alias CollabLitReview.Reviews.Bucket
+  alias CollabLitReview.Users.User
 
   schema "swimlanes" do
     field :name, :string
 
     belongs_to :review, Review
+    belongs_to :user, User
     has_many :buckets, Bucket
 
     timestamps()

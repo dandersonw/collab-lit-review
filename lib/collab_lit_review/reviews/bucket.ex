@@ -19,7 +19,7 @@ defmodule CollabLitReview.Reviews.Bucket do
   @doc false
   def changeset(bucket, attrs) do
     bucket
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :position, :swimlane_id])
+    |> validate_required([:name, :position, :swimlane_id])
   end
 end
