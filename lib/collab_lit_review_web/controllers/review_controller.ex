@@ -7,7 +7,11 @@ defmodule CollabLitReviewWeb.ReviewController do
   action_fallback CollabLitReviewWeb.FallbackController
 
   def index(conn, _params) do
-    reviews = Reviews.list_reviews()
+    user = conn.assigns.current_user
+    reviews = case user do
+                nil -> []
+                user -> Reviews.list_reviews(user)
+              end
     render(conn, "index.json", reviews: reviews)
   end
 

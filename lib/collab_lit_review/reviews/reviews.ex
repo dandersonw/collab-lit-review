@@ -153,6 +153,11 @@ defmodule CollabLitReview.Reviews do
     add_paper_to_bucket(bucket, paper)
   end
 
+  @doc """
+  Moves a paper down a swimlane. 
+  I.e. from bucket i to bucket i + 1.
+  If the paper is already at the end it stays there.
+  """
   def advance_paper_in_swimlane(swimlane, paper) do
     case get_bucket_w_paper_from_swimlane(swimlane, paper) do
       nil -> {:error, "Paper not in swimlane"}
