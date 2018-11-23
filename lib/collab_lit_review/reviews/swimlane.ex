@@ -19,7 +19,7 @@ defmodule CollabLitReview.Reviews.Swimlane do
   @doc false
   def changeset(swimlane, attrs) do
     swimlane
-    |> cast(attrs, [:name, :review_id])
+    |> cast(attrs, [:name, :review_id, :user_id])
     |> validate_required([:name, :review_id])
   end
 end

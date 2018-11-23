@@ -61,6 +61,11 @@ defmodule CollabLitReview.Reviews do
         db_create_bucket(%{"swimlane_id" => swimlane.id, "name" => "To Look At", "position" => 0})
         db_create_bucket(%{"swimlane_id" => swimlane.id, "name" => "Considering", "position" => 1})
         db_create_bucket(%{"swimlane_id" => swimlane.id, "name" => "Good", "position" => 2})
+
+        {:ok, swimlane} = db_create_swimlane(%{"name" => "Finished", "review_id" => review.id})
+        db_create_bucket(%{"swimlane_id" => swimlane.id, "name" => "Relevant", "position" => 0})
+        db_create_bucket(%{"swimlane_id" => swimlane.id, "name" => "Not Relevant", "position" => 1})
+
         {:ok, review}
     end
   end
