@@ -58,7 +58,7 @@ function error(state = null, action) {
 function root_reducer(state0, action) {
     console.log("reducer", state0, action);
 
-    let reducer = combineReducers({reviews, session, error});
+    let reducer = combineReducers({reviews, users, session, error});
     let state1 = reducer(state0, action);
 
     console.log("reducer1", state1);

@@ -16,10 +16,10 @@ function Navbar(props) {
     <Link className="navbar-brand" to={"/"}>CollaberLit</Link>
     <ul className="navbar-nav mr-auto">
       <li className="nav-item">
-        <Link className="nav-link" to={"/users"}>Users</Link>
+        <Link className="nav-link" to={"/users"} onClick={() => { api.fetch_users() }}>Users</Link>
       </li>
       <li className="nav-item">
-        <Link className="nav-link" to={"/reviews"}>Reviews</Link>
+        <Link className="nav-link" to={"/reviews"} onClick={() => { api.fetch_reviews() }}>Reviews</Link>
       </li>
       {profile_link}
     </ul>

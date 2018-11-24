@@ -19,6 +19,8 @@ class Root extends React.Component {
     super(props);
 
     api.check_for_session();
+    api.fetch_users();
+    api.fetch_reviews();
     //api.fetch_reviews();
   }
 

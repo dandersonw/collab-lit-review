@@ -53,9 +53,11 @@ class TheServer {
     }
 
     fetch_users() {
+      console.log("Requesting users...");
       this.fetch_path(
         "/api/v1/users",
         (resp) => {
+          console.log("Got users!");
           store.dispatch({
               type: 'USER_LIST',
               data: resp.data,
