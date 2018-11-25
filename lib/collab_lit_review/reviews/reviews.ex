@@ -44,11 +44,21 @@ defmodule CollabLitReview.Reviews do
 
   def add_collaborator_to_review(user, review) do
     existing_collaborators = Repo.all(Ecto.assoc(review, :collaborators))
-    review
+    review = review
     |> Repo.preload(:collaborators)
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:collaborators, [user | existing_collaborators])
-    |> Repo.update!()
+    |> Repo.update()
+
+    case review do
+      {:ok, review} ->
+        {:ok, swimlane} = db_create_swimlane(%{"name" => user.email, "review_id" => review.id, "user_id" => user.id})
+        db_create_bucket(%{"swimlane_id" => swimlane.id, "name" => "To Look At", "position" => 0})
+        db_create_bucket(%{"swimlane_id" => swimlane.id, "name" => "Considering", "position" => 1})
+        db_create_bucket(%{"swimlane_id" => swimlane.id, "name" => "Finished", "position" => 2})
+        {:ok, review}
+      _else -> review
+    end
   end
 
   def create_review(user, title) do
@@ -57,10 +67,6 @@ defmodule CollabLitReview.Reviews do
       err = {:error, _} -> err
       {:ok, review} ->
         add_collaborator_to_review(user, review)
-        {:ok, swimlane} = db_create_swimlane(%{"name" => user.email, "review_id" => review.id, "user_id" => user.id})
-        db_create_bucket(%{"swimlane_id" => swimlane.id, "name" => "To Look At", "position" => 0})
-        db_create_bucket(%{"swimlane_id" => swimlane.id, "name" => "Considering", "position" => 1})
-        db_create_bucket(%{"swimlane_id" => swimlane.id, "name" => "Good", "position" => 2})
 
         {:ok, swimlane} = db_create_swimlane(%{"name" => "Finished", "review_id" => review.id})
         db_create_bucket(%{"swimlane_id" => swimlane.id, "name" => "Relevant", "position" => 0})
@@ -148,6 +154,10 @@ defmodule CollabLitReview.Reviews do
     Repo.all(from s in Swimlane, where: s.review_id == ^review.id)
   end
 
+  def get_user_swimlane(review, user) do
+    Repo.one(from s in Swimlane, where: s.review_id == ^review.id and s.user_id == ^user.id)
+  end
+
   def add_paper_to_beginning_of_swimlane(swimlane, paper) do
     bucket = get_bucket_by_swimlane_idx(swimlane, 0)
     add_paper_to_bucket(bucket, paper)
@@ -209,6 +219,16 @@ defmodule CollabLitReview.Reviews do
     %Swimlane{}
     |> Swimlane.changeset(attrs)
     |> Repo.insert()
+  end
+
+  # Moves a bucket from its position to any other position in the swimlane
+  def move_bucket_in_swimlane(swimlane, bucket, position) do
+    for other = %Bucket{position: other_position} <- list_buckets(swimlane) do
+      if other_position >= position do
+        update_bucket(other, %{"position" => other_position + 1})
+      end
+    end
+    update_bucket(bucket, %{"position" => position})
   end
 
   @doc """

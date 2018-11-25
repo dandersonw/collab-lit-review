@@ -31,3 +31,7 @@ paper = S2.get_or_fetch_paper("bcfdf6d906f4c5214ff25f1c71ec6ffb18a791e0")
 Reviews.add_collaborator_to_review(bar, review)
 
 discovery = Reviews.create_discovery(review, paper: paper)
+
+swimlane = Reviews.get_user_swimlane(review, foo)
+bucket = Reviews.get_bucket_by_swimlane_idx(swimlane, 1)
+Reviews.move_bucket_in_swimlane(swimlane, bucket, 0)
