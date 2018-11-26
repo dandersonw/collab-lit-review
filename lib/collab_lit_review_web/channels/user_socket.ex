@@ -16,8 +16,14 @@ defmodule CollabLitReviewWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+  def connect(%{"token" => token}, socket, _connect_info) do
+    case Phoenix.Token.verify(CollabLitReviewWeb.Endpoint, "user token", token, max_age: 86400) do
+      {:ok, user_id} ->
+        socket = assign(socket, :user_id, user_id)
+        {:ok, socket}
+      _else -> :error
+    end
+    # {:ok, socket}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

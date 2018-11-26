@@ -3,16 +3,18 @@ defmodule CollabLitReviewWeb.ReviewEditorChannel do
 
   alias CollabLitReview.Repo
   alias CollabLitReview.Reviews
+  alias CollabLitReview.Users
   alias CollabLitReview.S2
   alias CollabLitReview.Reviews.Review
 
-  def join("review_editor:" <> review_id, payload, socket) do
-    case authorized?(payload, review_id) do
+  def join("review_editor:" <> review_id, _payload, socket) do
+    user_id = socket.assigns.user_id
+    case authorized?(user_id, review_id) do
       :unauthorized -> {:error, %{reason: "unauthorized"}}
-      {:ok, user_id, review} ->
+      {:ok, review} ->
         socket = socket
         |> assign(:review_id, review_id)
-        |> assign(:user, user)
+        |> assign(:user, Users.get_user!(user_id))
         {:ok, %{"review" => Review.client_view(review)}, socket}
     end
   end
@@ -35,42 +37,37 @@ defmodule CollabLitReviewWeb.ReviewEditorChannel do
     user = Users.get_user_by_email(user_email)
     case user do
       nil -> {:reply, {:error, "unknown user"}}
-      {review, user} ->
-        add_collaborator_to_review(user, review)
+      user ->
+        Reviews.add_collaborator_to_review(user, review)
         broadcast_updated_state(socket.assigns.review_id, socket)
         {:reply, :ok, socket}
     end
   end
 
-  def handle_in("accept_paper_from_discovery", %{"discovery_id" => discovery_id, "paper_id" => paper_id}) do
+  def handle_in("accept_paper_from_discovery", %{"discovery_id" => discovery_id, "paper_id" => paper_id}, socket) do
     review = Reviews.get_review(socket.assigns.review_id)
     discovery = Reviews.get_discovery!(discovery_id)
-    paper = Reviews.get_or_fetch_paper(paper_id)
+    paper = S2.get_or_fetch_paper(paper_id)
     Reviews.remove_paper_from_discovery(discovery, paper)
     swimlane = Reviews.get_user_swimlane(review, socket.assigns.user)
     Reviews.add_paper_to_beginning_of_swimlane(swimlane, paper)
   end
 
   defp broadcast_updated_state(review_id, socket) do
-    broadcast socket, "update", %{"review" => Review.client_view(review)}
+    broadcast socket, "update", %{"review" => Review.client_view(Reviews.get_review!(review_id))}
   end
 
   # Add authorization logic here as required.
-  defp authorized?(%{"token" => token, "user_id" => user_id}, review_id) do
-      case Phoenix.Token.verify(CollabLitReviewWeb.Endpoint, "user token", max_age: 86400) do
-        {:ok, user_id} ->
-          review = Reviews.get_review(review_id)
-          case review do
-            nil -> :unauthroized
-            review ->
-              review = Repo.preload(:collaborators)
-              if Enum.member?(Enum.map(review.collaborators), fn c -> c.id), user_id) do
-                {:ok, user_id, review}
-              else
-                :unauthorized
-              end
-          end
-        {:error, reason} -> :unauthorized
-      end
+  defp authorized?(user_id, review_id) do
+    case Reviews.get_review(review_id) do
+      nil -> :unauthorized
+      review ->
+        review = Repo.preload(review, :collaborators)
+        if Enum.member?(Enum.map(review.collaborators, fn c -> c.id end), user_id) do
+          {:ok, review}
+        else
+          :unauthorized
+        end
+    end
   end
 end

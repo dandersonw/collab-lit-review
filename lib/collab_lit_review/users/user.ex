@@ -9,8 +9,6 @@ defmodule CollabLitReview.Users.User do
     field :email, :string
     field :password_hash, :string
 
-    has_many :reviews, Review
-
     field :pw_tries, :integer
     field :pw_last_try, :utc_datetime
 
