@@ -31,8 +31,10 @@ defmodule CollabLitReviewWeb.SessionController do
   end
 
   defp create_session(conn, user) do
+    session = CollabLitReview.Users.session_from_user(user)
+    |> Map.put("token", Phoenix.Token.sign(CollabLitReviewWeb.Endpoint, "user token", user.id))
     resp = %{
-      data: CollabLitReview.Users.session_from_user(user)
+      data: session
     }
     conn
     |> put_session(:user_id, user.id)

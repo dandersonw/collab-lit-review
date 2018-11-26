@@ -20,4 +20,8 @@ defmodule CollabLitReview.Reviews.Review do
     |> cast(attrs, [:title])
     |> validate_required([:title])
   end
+
+  def client_view(review) do
+    %{}
+  end
 end

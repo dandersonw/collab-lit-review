@@ -41,6 +41,7 @@ defmodule CollabLitReview.Reviews do
 
   """
   def get_review!(id), do: Repo.get!(Review, id)
+  def get_review(id), do: Repo.get(Review, id)
 
   def add_collaborator_to_review(user, review) do
     existing_collaborators = Repo.all(Ecto.assoc(review, :collaborators))
