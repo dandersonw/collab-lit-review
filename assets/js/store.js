@@ -34,11 +34,8 @@ function users(state = [], action) {
 
 function session(state = null, action) {
   switch (action.type) {
-  case 'NEW_SESSION':
-    let socket = new Socket("/socket", {params: {token: action.data.token}});
-    return _.assign({}, action.data, {socket: socket});
-  case 'DELETE_SESSION':
-    return null;
+  case 'FOUND_SESSION':
+    return action.data;
   default:
     return state;
   }

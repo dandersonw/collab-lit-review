@@ -125,10 +125,7 @@ class TheServer {
             "/api/v1/sessions",
             {email, password},
             (resp) => {
-                store.dispatch({
-                    type: 'NEW_SESSION',
-                    data: resp.data,
-                });
+              location.reload();
             }
         );
     }
@@ -138,9 +135,7 @@ class TheServer {
             method: "delete",
             contentType: "application/json; charset=UTF-8",
             success: (resp) => {
-                store.dispatch({
-                    type: 'DELETE_SESSION'
-                });
+              location.reload();
             }
         });
     }
@@ -163,7 +158,7 @@ class TheServer {
 
     check_for_session() {
         store.dispatch({
-            type: 'NEW_SESSION',
+            type: 'FOUND_SESSION',
             data: window.session,
         });
     }

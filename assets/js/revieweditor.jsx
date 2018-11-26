@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Link } from 'react-router-dom';
-// import socket from './socket'
+import socket from './socket'
 import _ from "lodash";
 import $ from "jquery";
 
@@ -29,19 +29,9 @@ class ReviewEditor extends React.Component {
 
   componentDidMount() {
     console.log("Review editor component mounted with review_id", this.state.review_id);
-    if (this.props.socket != null) {
-      let channel = this.props.socket.channel("review_editor:" + this.state.review_id.toString(), {});
-      this.connectToChannel(channel);
-    }
+    let channel = socket.channel("review_editor:" + this.state.review_id.toString(), {});
+    this.connectToChannel(channel);
   }
-
-  // componentWillReceiveProps(nextProps) {
-  //   if (this.props.review_id != nextProps.review_id) {
-  //   console.log("Review editor component mounted with review_id", nextProps.review_id);
-  //   let channel = socket.channel("review_editor:" + nextProps.review_id.toString(), {});
-  //   this.connectToChannel(channel);
-  //   }
-  // }
 
   render() {
     return <p>This will be an editor.</p>
@@ -64,7 +54,7 @@ class ReviewEditor extends React.Component {
 }
 
 function state2props(state, ownProps) {
-  return {session: state.session, review_id: ownProps.reviewId, socket: state.socket};
+    return {session: state.session, review_id: ownProps.reviewId};
 }
 
 export default connect(state2props)(ReviewEditor);
