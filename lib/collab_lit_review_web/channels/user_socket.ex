@@ -17,7 +17,7 @@ defmodule CollabLitReviewWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   def connect(%{"token" => token}, socket, _connect_info) do
-    case Phoenix.Token.verify(CollabLitReviewWeb.Endpoint, "user token", token, max_age: 86400) do
+    case Phoenix.Token.verify(CollabLitReviewWeb.Endpoint, "user_id", token, max_age: 86400) do
       {:ok, user_id} ->
         socket = assign(socket, :user_id, user_id)
         {:ok, socket}
