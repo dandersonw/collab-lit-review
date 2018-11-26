@@ -66,6 +66,20 @@ class TheServer {
         );
     }
 
+    new_review(title, user_id) {
+      //let review = {title, user_id}
+      this.send_post(
+        "/api/v1/reviews",
+        {title, user_id},
+        (resp) => {
+          store.dispatch({
+            type: 'REVIEW_ADD',
+            data: resp.data,
+          });
+        }
+      );
+    }
+
     // new_task(title, desc, assignee) {
     //     let task = {title, desc, assignee}
     //     this.send_post(

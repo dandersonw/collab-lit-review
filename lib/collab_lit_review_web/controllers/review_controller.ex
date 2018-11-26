@@ -3,6 +3,8 @@ defmodule CollabLitReviewWeb.ReviewController do
 
   alias CollabLitReview.Reviews
   alias CollabLitReview.Reviews.Review
+  alias CollabLitReview.Users
+  alias CollabLitReview.Users.User
 
   action_fallback CollabLitReviewWeb.FallbackController
 
@@ -15,14 +17,17 @@ defmodule CollabLitReviewWeb.ReviewController do
     render(conn, "index.json", reviews: reviews)
   end
 
-  # def create(conn, %{"review" => review_params}) do
-  #   with {:ok, %Review{} = review} <- Reviews.create_review(review_params) do
-  #     conn
-  #     |> put_status(:created)
-  #     |> put_resp_header("location", Routes.review_path(conn, :show, review))
-  #     |> render("show.json", review: review)
-  #   end
-  # end
+  def create(conn, %{"title" => title, "user_id" => user_id}) do
+    current_user = conn.assigns.current_user
+    if current_user && current_user.id == user_id do # only the current user can create reviews in their name
+      with {:ok, %Review{} = review} <- Reviews.create_review(current_user, title) do
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", Routes.review_path(conn, :show, review))
+        |> render("show.json", review: review)
+      end
+    end
+  end
 
   def show(conn, %{"id" => id}) do
     review = Reviews.get_review!(id)

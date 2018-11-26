@@ -14,14 +14,18 @@ function UserProfile(props) {
         return <tr key={review.id}>
           <td>{review.title}</td>
           <td>
-            <ButtonToolbar>
-              <Button bsStyle="danger">Edit</Button>
-              <Button bsStyle="danger">Delete</Button>
-            </ButtonToolbar>
+            <div className="btn-toolbar">
+              <button className="btn btn-danger">Edit</button>
+              <button className="btn btn-danger">Delete</button>
+            </div>
           </td>
         </tr>
       }
     })
+    let onCreateNewButtonClicked = () => {
+      let title = $('#reviewTitleField').val();
+      api.new_review(title, user.id);
+    }
     return <div className="container-fluid">
       <div className="row">
         <div className="col-6">
@@ -45,6 +49,14 @@ function UserProfile(props) {
               {reviews}
             </tbody>
           </table>
+          <div className="row">
+            <div className="col-8">
+              <input type="text" className="form-control" id="reviewTitleField" placeholder="Title"></input>
+            </div>
+            <div className="col-4">
+              <button className="btn btn-primary" onClick={onCreateNewButtonClicked}>New Review</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

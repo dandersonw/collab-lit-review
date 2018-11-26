@@ -18,6 +18,8 @@ function reviews(state = [], action) {
   switch (action.type) {
   case 'REVIEW_LIST':
     return action.data;
+  case 'REVIEW_ADD':
+    return state.slice().push(action.data.review);
   default:
     return state;
   }

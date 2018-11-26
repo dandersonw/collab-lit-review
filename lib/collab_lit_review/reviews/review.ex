@@ -18,6 +18,7 @@ defmodule CollabLitReview.Reviews.Review do
   def changeset(review, attrs) do
     review
     |> cast(attrs, [:title])
+    |> cast_assoc(:collaborators)
     |> validate_required([:title])
   end
 

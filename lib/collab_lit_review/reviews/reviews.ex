@@ -23,7 +23,8 @@ defmodule CollabLitReview.Reviews do
   def list_reviews(user) do
     Repo.all(from r in Review,
       join: c in assoc(r, :collaborators),
-      where: ^user.id == c.id)
+      where: ^user.id == c.id,
+      preload: :collaborators)
   end
 
   @doc """
@@ -165,7 +166,7 @@ defmodule CollabLitReview.Reviews do
   end
 
   @doc """
-  Moves a paper down a swimlane. 
+  Moves a paper down a swimlane.
   I.e. from bucket i to bucket i + 1.
   If the paper is already at the end it stays there.
   """
@@ -459,7 +460,7 @@ defmodule CollabLitReview.Reviews do
         |> Ecto.Changeset.change()
         |> Ecto.Changeset.put_assoc(:papers, papers)
         |> Repo.update()
-    end    
+    end
   end
 
   defp add_paper_to_thing(thing, paper) do

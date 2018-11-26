@@ -10,7 +10,7 @@ import {Socket} from "phoenix"
 
 var socket = null;
 if (window.session != null) {
-  socket = new Socket("/socket", {params: {token: window.session.token}})
+  socket = new Socket("/socket", {params: {token: window.session != null ? window.session.token : null }})
   socket.connect()
 }
 // When you connect, you'll often need to authenticate the client.
