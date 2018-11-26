@@ -15,6 +15,7 @@ defmodule CollabLitReviewWeb.ReviewEditorChannel do
         socket = socket
         |> assign(:review_id, review_id)
         |> assign(:user, Users.get_user!(user_id))
+        #{:ok, %{"review" => generate_client_view(user_id, review_id)}, socket}
         {:ok, %{"review" => Review.client_view(review)}, socket}
     end
   end
@@ -99,7 +100,7 @@ defmodule CollabLitReviewWeb.ReviewEditorChannel do
       nil -> :error
       review ->
         # Start with the review.
-        review = review |> Repo.preload([:collaborators, :swimlanes]
+        review = review |> Repo.preload([:collaborators, :swimlanes])
         # Get collaborators and swimlanes from the review.
         collaborators = review.collaborators
         swimlanes = review.swimlanes |> Repo.preload(:buckets)
