@@ -22,7 +22,7 @@ function UserProfile(props) {
           <td>{review.title}</td>
           <td>
             <div className="btn-toolbar">
-              <Link className="btn btn-danger" to={"/api/v1/reviews/edit/" + review.id.toString()}>Edit</Link>
+              <Link className="btn btn-danger" to={"/reviews/edit/" + review.id.toString()}>Edit</Link>
               <button className="btn btn-danger" onClick={() => {onDeleteButtonClicked(review.id)}}>Delete</button>
             </div>
           </td>
