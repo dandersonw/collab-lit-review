@@ -44,7 +44,8 @@ defmodule CollabLitReviewWeb.ReviewController do
 
   def delete(conn, %{"id" => id}) do
     review = Reviews.get_review!(id)
-
+    IO.puts "Deleting a review"
+    IO.inspect review
     with {:ok, %Review{}} <- Reviews.delete_review(review) do
       send_resp(conn, :no_content, "")
     end

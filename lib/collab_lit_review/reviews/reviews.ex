@@ -23,8 +23,7 @@ defmodule CollabLitReview.Reviews do
   def list_reviews(user) do
     Repo.all(from r in Review,
       join: c in assoc(r, :collaborators),
-      where: ^user.id == c.id,
-      preload: :collaborators)
+      where: ^user.id == c.id)
   end
 
   @doc """

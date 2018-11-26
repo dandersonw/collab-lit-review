@@ -17,9 +17,16 @@ import _ from 'lodash';
 function reviews(state = [], action) {
   switch (action.type) {
   case 'REVIEW_LIST':
+    console.log("review list")
     return action.data;
   case 'REVIEW_ADD':
-    return state.slice().push(action.data.review);
+    console.log("review add")
+    let state1 = state.slice();
+    state1.push(action.data);
+    return state1;
+  case 'REVIEW_REMOVE':
+    console.log("review remove")
+    return _.filter(state, (review) => (review.id != action.data));
   default:
     return state;
   }

@@ -9,23 +9,26 @@ import api from "./api"
 function UserProfile(props) {
   let user = _.find(props.users, (user) => { if (user.id == props.profileId) return user; });
   if (user) {
+    let onCreateNewButtonClicked = () => {
+      let title = $('#reviewTitleField').val();
+      api.new_review(title, user.id);
+    }
+    let onDeleteButtonClicked = (id) => {
+      api.delete_review(id);
+    }
     let reviews = _.map(props.reviews, (review) => {
       if (_.find(review.collaborators, (collaborator) => { return collaborator.id == user.id })) {
         return <tr key={review.id}>
           <td>{review.title}</td>
           <td>
             <div className="btn-toolbar">
-              <button className="btn btn-danger">Edit</button>
-              <button className="btn btn-danger">Delete</button>
+              <Link className="btn btn-danger" to={"/api/v1/reviews/edit/" + review.id.toString()}>Edit</Link>
+              <button className="btn btn-danger" onClick={() => {onDeleteButtonClicked(review.id)}}>Delete</button>
             </div>
           </td>
         </tr>
       }
     })
-    let onCreateNewButtonClicked = () => {
-      let title = $('#reviewTitleField').val();
-      api.new_review(title, user.id);
-    }
     return <div className="container-fluid">
       <div className="row">
         <div className="col-6">

@@ -19,6 +19,7 @@ defmodule CollabLitReview.Reviews.Review do
     review
     |> cast(attrs, [:title])
     |> cast_assoc(:collaborators)
+    #|> foreign_key_constraint(:collaborators)
     |> validate_required([:title])
   end
 

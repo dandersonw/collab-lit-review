@@ -26,6 +26,7 @@ class TheServer {
 
     send_post(path, data, callback) { this.send_data(path, "post", data, callback) }
     send_put(path, data, callback) { this.send_data(path, "put", data, callback) }
+    send_delete(path, data, callback) { this.send_data(path, "delete", data, callback) }
 
     error_handler(jqxhr, status, error) {
         store.dispatch({
@@ -72,9 +73,25 @@ class TheServer {
         "/api/v1/reviews",
         {title, user_id},
         (resp) => {
+          console.log("got new review", resp)
           store.dispatch({
             type: 'REVIEW_ADD',
             data: resp.data,
+          });
+        }
+      );
+    }
+
+    delete_review(id) {
+      //let review = {title, user_id}
+      this.send_delete(
+        "/api/v1/reviews/" + id.toString(),
+        {},
+        (resp) => {
+          console.log("deleted review", resp)
+          store.dispatch({
+            type: 'REVIEW_REMOVE',
+            data: id,
           });
         }
       );

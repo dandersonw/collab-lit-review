@@ -5,7 +5,7 @@ defmodule CollabLitReview.Repo.Migrations.CreateBuckets do
     create table(:buckets) do
       add :name, :string
       add :position, :integer
-      add :swimlane_id, references(:swimlanes, on_delete: :nothing)
+      add :swimlane_id, references(:swimlanes, on_delete: :delete_all)
 
       timestamps()
     end
@@ -13,8 +13,8 @@ defmodule CollabLitReview.Repo.Migrations.CreateBuckets do
     create index(:buckets, [:swimlane_id])
 
     create table(:buckets_papers, primary_key: false) do
-      add :bucket_id, references(:buckets)
-      add :paper_id, references(:papers, column: :s2_id, type: :string)
+      add :bucket_id, references(:buckets, on_delete: :delete_all)
+      add :paper_id, references(:papers, column: :s2_id, type: :string, on_delete: :delete_all)
     end
 
     create index(:buckets_papers, [:bucket_id, :paper_id], unique: true)

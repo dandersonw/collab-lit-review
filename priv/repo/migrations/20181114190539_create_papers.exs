@@ -17,16 +17,16 @@ defmodule CollabLitReview.Repo.Migrations.CreatePapers do
     create index(:papers, [:s2_id], unique: true)
 
     create table(:authors_papers) do
-      add :paper_id, references(:papers, column: :s2_id, type: :string)
-      add :author_id, references(:authors, column: :s2_id)
+      add :paper_id, references(:papers, column: :s2_id, type: :string, on_delete: :delete_all)
+      add :author_id, references(:authors, column: :s2_id, on_delete: :delete_all)
       timestamps()
     end
 
     create index(:authors_papers, [:paper_id, :author_id], unique: true, name: :authors_papers_index)
 
     create table(:citations) do
-      add :citee, references(:papers, column: :s2_id, type: :string)
-      add :citer, references(:papers, column: :s2_id, type: :string)
+      add :citee, references(:papers, column: :s2_id, type: :string, on_delete: :delete_all)
+      add :citer, references(:papers, column: :s2_id, type: :string, on_delete: :delete_all)
       timestamps()
     end
 
