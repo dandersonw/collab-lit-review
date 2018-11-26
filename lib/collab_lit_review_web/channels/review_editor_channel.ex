@@ -1,7 +1,7 @@
 defmodule CollabLitReviewWeb.ReviewEditorChannel do
   use CollabLitReviewWeb, :channel
 
-  def join("review_editor:lobby", payload, socket) do
+  def join("review_editor:" <> review_id, payload, socket) do
     if authorized?(payload) do
       {:ok, socket}
     else

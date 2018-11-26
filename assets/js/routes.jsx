@@ -13,6 +13,7 @@ import ShowError from './showerror';
 
 import RegisterPage from './registerpage';
 import UserProfile from './profilepage';
+import ReviewEditor from './revieweditor';
 
 import api from './api';
 
@@ -33,9 +34,15 @@ function Routes(props) {
                           component={ReviewList}/>
                    <Route path="/register"
                           exact={true}
-                          component={RegisterPage}/> */}
+                          component={RegisterPage}/>
                    <Route path="/users/:id"
                           render={({ match }) => <UserProfile profileId={match.params.id}/>}
+                          />
+                   {/*<Route path="/reviews/:id"
+                          render={({ match }) => <ReviewPage reviewId={match.params.id}/>}
+                          />*/}
+                   <Route path="/reviews/edit/:id"
+                          render={({ match }) => <ReviewEditor reviewId={match.params.id}/>}
                           />
                    {/* <Route path="/new" */}
                    {/*        exact={true} */}

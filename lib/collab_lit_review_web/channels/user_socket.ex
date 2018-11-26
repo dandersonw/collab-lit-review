@@ -3,6 +3,7 @@ defmodule CollabLitReviewWeb.UserSocket do
 
   ## Channels
   # channel "room:*", CollabLitReviewWeb.RoomChannel
+  channel "review_editor:*", CollabLitReviewWeb.ReviewEditorChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
