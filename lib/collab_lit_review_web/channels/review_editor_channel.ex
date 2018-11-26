@@ -14,6 +14,7 @@ defmodule CollabLitReviewWeb.ReviewEditorChannel do
         |> assign(:review_id, review_id)
         |> assign(:user, user)
         {:ok, %{"review" => Review.client_view(review)}, socket}
+    end
   end
 
   # Channels can be used in a request/response fashion
