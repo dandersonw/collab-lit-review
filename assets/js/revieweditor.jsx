@@ -23,12 +23,12 @@ class ReviewEditor extends React.Component {
     console.log("ReviewEditor constructed with the following props, ", props)
     this.state = {
       review_id: props.review_id,
-      view: null,
+      review: null,
     };
   }
 
   gotView(payload) {
-    this.setState(state => _.assigns(state, {view: payload}));
+    this.setState(state => _.assign(state, payload));
   }
 
   componentDidMount() {
@@ -38,7 +38,14 @@ class ReviewEditor extends React.Component {
   }
 
   render() {
-    return <p>This will be an editor.</p>
+    if (!this.state.review) return null;
+    console.log("Rendering!", this.state);
+    let swimlanes = _.map(this.state.review.swimlanes, (swimlane) => {
+      return <Swimlane swimlane={swimlane} buckets={this.state.review.buckets}/>;
+    });
+    return <div className="container-fluid">
+      {swimlanes}
+    </div>;
   }
 
   connectToChannel(channel) {
@@ -61,6 +68,24 @@ class ReviewEditor extends React.Component {
   }
 }
 
+function Swimlane(props) {
+  let buckets = _.filter(props.buckets, (bucket) => (bucket.swimlane_id == props.swimlane.id));
+  buckets = _.sortBy(buckets, ["position"]);
+  buckets = _.map(buckets, (bucket) => <div className="col-md-2"><Bucket bucket={bucket}/></div>)
+  return <div key={props.swimlane.id} className="swimlane card">
+    <h3 className="card-title">{props.swimlane.name}</h3>
+    <div className="row">
+      {buckets}
+    </div>
+  </div>;
+}
+
+function Bucket(props) {
+  return <div key={props.bucket.id} className="bucket card">
+    <h2 className="card-title">{props.bucket.name}</h2>
+    <h4 className="card-subtitle">{props.bucket.position}</h4>
+  </div>
+}
 
 
 

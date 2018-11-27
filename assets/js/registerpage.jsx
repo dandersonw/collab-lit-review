@@ -33,7 +33,7 @@ function UserRegistration(props) {
       <h2>User Registration</h2>
       <div className="form-group mx-3 my-3">
         <label>Email</label>
-        <input className="form-control mb-1" id="register-email" required="required" type="text" />
+        <input className="form-control mb-1" id="register-email" required="required" type="email" />
         <label>Password (must be at least 8 characters long)</label>
         <input className="form-control mb-2" id="register-password" required="required" type="password"
           onChange={validateLength}/>
