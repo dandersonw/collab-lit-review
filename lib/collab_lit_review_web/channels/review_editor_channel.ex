@@ -15,8 +15,8 @@ defmodule CollabLitReviewWeb.ReviewEditorChannel do
         socket = socket
         |> assign(:review_id, review_id)
         |> assign(:user, Users.get_user!(user_id))
-        #{:ok, %{"review" => generate_client_view(user_id, review_id)}, socket}
-        {:ok, %{"review" => Review.client_view(review)}, socket}
+        {:ok, %{"review" => generate_client_view(user_id, review_id)}, socket}
+        #{:ok, %{"review" => Review.client_view(review)}, socket}
     end
   end
 
