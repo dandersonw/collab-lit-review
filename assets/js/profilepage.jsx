@@ -29,15 +29,19 @@ function UserProfile(props) {
         </tr>
       }
     })
+    let message = <p>You've stumbled upon another user's profile. To the right you will find
+    the literature reviews you are both collaborators on.</p>
+    if (user.id == props.session.user_id) {
+      message = <p>This is your profile. To the right you will find
+      the literature reviews you collaborate on.</p>
+    }
     return <div className="container-fluid">
       <div className="row">
         <div className="col-6">
           <h2>{user.email}</h2>
           {/* TODO: Create display names for users */}
           <div className="card">
-            <p>Maybe users should have something more interesting to display here...
-            We should also introduce display names so the user doesn't have to show
-            their email on their profile.</p>
+            {message}
           </div>
         </div>
         <div className="col-6">
