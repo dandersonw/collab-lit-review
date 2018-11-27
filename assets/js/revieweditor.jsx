@@ -71,7 +71,7 @@ class ReviewEditor extends React.Component {
 function Swimlane(props) {
   let buckets = _.filter(props.buckets, (bucket) => (bucket.swimlane_id == props.swimlane.id));
   buckets = _.sortBy(buckets, ["position"]);
-  buckets = _.map(buckets, (bucket) => <div className="col-md-2"><Bucket bucket={bucket}/></div>)
+  buckets = _.map(buckets, (bucket) => <div key={bucket.id} className="col-md-2"><Bucket bucket={bucket}/></div>)
   return <div key={props.swimlane.id} className="swimlane card">
     <h3 className="card-title">{props.swimlane.name}</h3>
     <div className="row">
@@ -81,10 +81,10 @@ function Swimlane(props) {
 }
 
 function Bucket(props) {
-  return <div key={props.bucket.id} className="bucket card">
-    <h2 className="card-title">{props.bucket.name}</h2>
-    <h4 className="card-subtitle">{props.bucket.position}</h4>
-  </div>
+  return <button className="bucket card">
+    <h4 className="card-title text-center">{props.bucket.name}</h4>
+    <h3 className="text-center">{props.bucket.papers.length}</h3>
+  </button>
 }
 
 

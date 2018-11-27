@@ -34,13 +34,14 @@ defmodule CollabLitReviewWeb.ReviewController do
     render(conn, "show.json", review: review)
   end
 
-  # def update(conn, %{"id" => id, "review" => review_params}) do
-  #   review = Reviews.get_review!(id)
-
-  #   with {:ok, %Review{} = review} <- Reviews.update_review(review, review_params) do
-  #     render(conn, "show.json", review: review)
-  #   end
-  # end
+  def update(conn, %{"new_user_id" => new_user_id, "id" => review_id}) do
+    IO.puts "updated user"
+    review = Reviews.get_review!(review_id);
+    user = Users.get_user!(new_user_id);
+    with {:ok, %Review{} = review} <- Reviews.add_collaborator_to_review(user, review) do
+      render(conn, "show.json", review: review)
+    end
+  end
 
   def delete(conn, %{"id" => id}) do
     review = Reviews.get_review!(id)

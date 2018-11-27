@@ -19,7 +19,7 @@ export function ReviewList(props) {
                  { _.map(relevantReviews, (review) => <Review review={review}/>)}
                </tbody>
              </table>
-             <Link to={"/new"}>New Review</Link>
+             //<Link to={"/new"}>New Review</Link>
            </div>
          </div>;
 

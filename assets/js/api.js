@@ -97,6 +97,18 @@ class TheServer {
       );
     }
 
+    add_collaborator_to_review(new_user_id, review_id) {
+      this.send_put(
+        "/api/v1/reviews/" + review_id,
+        {new_user_id},
+        (resp) => {
+          store.dispatch({
+            type: 'REVIEW_CHANGE',
+            data: resp.data,
+          });
+        }
+      )};
+
     // new_task(title, desc, assignee) {
     //     let task = {title, desc, assignee}
     //     this.send_post(
