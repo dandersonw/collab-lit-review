@@ -87,12 +87,13 @@ defmodule CollabLitReviewWeb.ReviewEditorChannel do
     Map.put(object, key, Enum.uniq(Enum.map(object[key], fn x -> x.id end)))
   end
 
+  defp flattenAll(object)
+
   defp flatten2(object, key) do
     Map.put(object, key, object[key].id)
   end
 
   defp uniquify(object_list) do
-    IO.puts "Uniquifying owo"
     Enum.uniq_by(object_list, fn object -> object.id end);
   end
 
@@ -104,7 +105,8 @@ defmodule CollabLitReviewWeb.ReviewEditorChannel do
         review = review |> Repo.preload([:collaborators, :swimlanes])
         # Get collaborators and swimlanes from the review.
         collaborators = review.collaborators
-        swimlanes = review.swimlanes |> Repo.preload(:buckets)
+        swimlanes = review.swimlanes
+        swimlanes = swimlanes |> Repo.preload(:buckets)
         # Get buckets from the swimlanes
         buckets = List.foldl(swimlanes, [], fn (swimlane, acc) ->
           swimlane.buckets ++ acc
@@ -118,24 +120,27 @@ defmodule CollabLitReviewWeb.ReviewEditorChannel do
           {paper.authors ++ (acc |> elem(0)), paper.references ++ (acc |> elem(1)), paper.citations ++ (acc |> elem(3))}
         end)
         authors = uniquify(authors)
-        references = uniquify(references)
-        citations = uniquify(citations)
-        # Now flatten all those member lists to ids to save space
-        review = review |> flatten(:collaborators) |> flatten(:swimlanes)
-        swimlanes = swimlanes |> flatten(:buckets)
-        buckets = buckets |> flatten(:papers)
-        papers = papers |> flatten(:authors) |> flatten(:references) |> flatten(:citations)
+        papers = uniquify(papers ++ references ++ citations)
+        # Now flatten all those member lists to ids and convert the structs to maps
+        collaborators = Enum.map(collaborators, fn collaborator -> Map.from_struct(collaborator) |> Map.take([:id, :email]) end )
+        swimlanes = Enum.map(swimlanes, fn swimlane -> Map.from_struct(swimlane) |> flatten(:buckets) |> Map.take([:id, :name, :review_id, :user_id, :buckets]) end )
+        buckets = Enum.map(buckets, fn bucket -> Map.from_struct(bucket) |> flatten(:papers) |> Map.take([:id, :name, :position, :swimlane_id, :papers]) end )
+        papers = Enum.map(papers, fn paper -> Map.from_struct(paper) |> flatten(:authors) |> flatten(:references) |> flatten(:citations) |> Map.take([:id, :abstract, :title, :year, :is_stub, :authors, :references, :citations]) end )
+        authors = Enum.map(authors, fn author -> Map.from_struct(author) |> Map.take([:id, :name, :is_stub]) end )
+        #references = Enum.map(references, fn reference -> Map.from_struct(reference) |> Map.take([:id, :abstract, :title, :year, :is_stub, :authors, :references, :citations]) end )
+        #citations = Enum.map(citations, fn citation -> Map.from_struct(citation) |> Map.take([:id, :abstract, :title, :year, :is_stub, :authors, :references, :citations]) end )
         # Construct and return the state
-        %{
+        result = %{
           "title" => review.title,
           "collaborators" => collaborators,
           "swimlanes" => swimlanes,
           "buckets" => buckets,
           "papers" => papers,
           "authors" => authors,
-          "references" => references,
-          "citations" => citations,
         }
+        IO.puts "RESULT IS"
+        IO.inspect result
+        result
     end
   end
 end

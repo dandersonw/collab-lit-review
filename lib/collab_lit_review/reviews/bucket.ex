@@ -11,7 +11,7 @@ defmodule CollabLitReview.Reviews.Bucket do
     field :position, :integer
 
     belongs_to :swimlane, Swimlane
-    many_to_many :papers, Paper, join_through: "buckets_papers"
+    many_to_many :papers, Paper, [join_through: "buckets_papers", join_keys: [bucket_id: :id, paper_id: :s2_id]]
 
     timestamps()
   end
