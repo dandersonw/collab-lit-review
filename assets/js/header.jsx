@@ -57,6 +57,8 @@ function SessionView(props) {
             <input className="form-control mb-2" id="login-password" type="password" />
             <button className="btn btn-primary mr-3" onClick={onLoginButtonClicked}>Login</button>
             <Link to={"/register"}>Register</Link>
+            <label>Already registered?</label>
+            <a href="/auth/google" className="btn btn-success">Google Sign-In</a>
           </div>
         </li>
       </ul>
