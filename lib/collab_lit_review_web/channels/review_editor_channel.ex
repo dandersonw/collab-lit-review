@@ -87,12 +87,6 @@ defmodule CollabLitReviewWeb.ReviewEditorChannel do
     Map.put(object, key, Enum.uniq(Enum.map(object[key], fn x -> x.id end)))
   end
 
-  defp flattenAll(object)
-
-  defp flatten2(object, key) do
-    Map.put(object, key, object[key].id)
-  end
-
   defp uniquify(object_list) do
     Enum.uniq_by(object_list, fn object -> object.id end);
   end
