@@ -23,8 +23,12 @@ class ReviewEditor extends React.Component {
     console.log("ReviewEditor constructed with the following props, ", props)
     this.state = {
       review_id: props.review_id,
-      channel: null
+      view: null,
     };
+  }
+
+  gotView(payload) {
+    this.setState(state => _.assigns(state, {view: payload}));
   }
 
   componentDidMount() {
@@ -38,20 +42,28 @@ class ReviewEditor extends React.Component {
   }
 
   connectToChannel(channel) {
-    if (this.state.channel != null) {
-      this.state.channel.leave();
+    if (this.channel != null) {
+      this.channel.leave();
     }
-    channel.join().receive("ok", resp => { console.log("Join successful,", resp) });
-    this.setState(state => _.assign(state, { channel }) );
+    channel.join().receive("ok", resp => { console.log("Join successful,", resp); this.gotView(resp); });
+    //this.setState(state => _.assign(state, { channel }) );
+    channel.on("update", payload => {
+      this.gotView(payload);
+    })
+    this.channel = channel;
   }
 
   disconnectFromChannel() {
-    if (this.state.channel != null) {
-      this.state.channel.leave();
-      this.setState(state => _.assign(state, { channel: null }) );
+    if (this.channel != null) {
+      this.channel.leave();
+      this.channel = null;
     }
   }
 }
+
+
+
+
 
 function state2props(state, ownProps) {
     return {session: state.session, review_id: ownProps.reviewId};

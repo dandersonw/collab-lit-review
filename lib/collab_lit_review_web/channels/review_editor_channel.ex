@@ -92,6 +92,7 @@ defmodule CollabLitReviewWeb.ReviewEditorChannel do
   end
 
   defp uniquify(object_list) do
+    IO.puts "Uniquifying owo"
     Enum.uniq_by(object_list, fn object -> object.id end);
   end
 
@@ -107,7 +108,7 @@ defmodule CollabLitReviewWeb.ReviewEditorChannel do
         # Get buckets from the swimlanes
         buckets = List.foldl(swimlanes, [], fn (swimlane, acc) ->
           swimlane.buckets ++ acc
-        end) |> uniquify |> Repo.preload([:papers])
+        end) |> uniquify |> Repo.preload(:papers)
         # Get papers from the buckets
         papers = List.foldl(buckets, [], fn (bucket, acc) ->
           bucket.papers ++ acc
